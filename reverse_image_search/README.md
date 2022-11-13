@@ -9,7 +9,7 @@ Two major components are needed to support reverse image search:
 - a vector similarity module, which returns the most similar images based on vector similarity.
 
 
-To run this example, please checkout the repo:
+To run this example (Docker needed), please checkout the repo:
 
 ```
 git clone https://github.com/kungfuai/triton-inference-examples
@@ -22,8 +22,18 @@ First, build the image search models:
 bin/build_reverse_image_search_models.sh
 ```
 
-Then, start the Triton inference server by:
+Then, start the Triton inference server:
+
+If you have GPU and CUDA available:
 
 ```
-bash bin/start_inference_server.sh
+bash bin/start_inference_server_gpu.sh
 ```
+
+If you want to use CPU only:
+
+```
+bash bin/start_inference_server_cpu.sh
+```
+
+The above steps will use docker images and pulling down the docker image can take some time.

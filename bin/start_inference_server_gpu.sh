@@ -1,8 +1,9 @@
 
-tritonversion=21.10 # 22.09, 22.01
+tritonversion=22.10 # 21.10, 22.09, 22.01
 image=nvcr.io/nvidia/tritonserver:${tritonversion}-py3
 model_repo=$(pwd)/model_repo/
 
+# To start the inferencee server using one GPU, please uncomment the following line:
 docker run -it --gpus '"device=0"' --rm -p 8000:8000 -p 8001:8001 -p 8002:8002 -v $model_repo:/models \
     $image tritonserver --model-repository=/models
 
