@@ -9,6 +9,13 @@ Two major components are needed to support reverse image search:
 - a vector similarity module, which returns the most similar images based on vector similarity.
 
 
+To run this example, please checkout the repo:
+
+```
+git clone https://github.com/kungfuai/triton-inference-examples
+cd triton-inference-examples
+```
+
 First, build the image search models:
 
 ```
