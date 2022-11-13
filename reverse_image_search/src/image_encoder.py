@@ -11,14 +11,14 @@ input [
   {
     name: "INPUT__0"
     data_type: TYPE_FP32
-    dims: [ 3, -1, -1 ]
+    dims: [ -1, 3, -1, -1 ]
   }
 ]
 output [
   {
     name: "OUTPUT__0"
     data_type: TYPE_FP32
-    dims: [ 512 ]
+    dims: [ -1, 512 ]
   }
 ]
 """

@@ -6,7 +6,8 @@ image=nvcr.io/nvidia/tritonserver:${tritonversion}-py3
 # image=mcr.microsoft.com/azureml/tritonserver-21.06-py38-inference:latest # requires AVX instruction set
 model_repo=$(pwd)/model_repo/
 
-docker run -it --rm -p 8000:8000 -p 8001:8001 -p 8002:8002 -v $model_repo:/models \
+docker network create --driver bridge tritonserver
+docker run -it --rm --name triton_reverse_image_search --network tritonserver -p 8000:8000 -p 8001:8001 -p 8002:8002 -v $model_repo:/models \
     $image tritonserver --model-repository=/models
 
 # To start the inference server on only one model:

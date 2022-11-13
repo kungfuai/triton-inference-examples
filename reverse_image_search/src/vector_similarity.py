@@ -1,5 +1,5 @@
 from os import makedirs, path
-from typing import List
+from typing import List, Tuple
 import numpy as np
 import torch
 
@@ -12,19 +12,19 @@ input [
   {
     name: "INPUT__0"
     data_type: TYPE_FP32
-    dims: [ -1 ]
+    dims: [ -1, -1 ]
   }
 ]
 output [
   {
     name: "OUTPUT__0"
-    data_type: TYPE_INT32
-    dims: [ -1 ]
+    data_type: TYPE_INT64
+    dims: [ -1, -1 ]
   },
   {
-    name: "OUTPUT__0"
+    name: "OUTPUT__1"
     data_type: TYPE_FP32
-    dims: [ -1 ]
+    dims: [ -1, -1 ]
   }
 ]
 """
@@ -46,11 +46,12 @@ class TorchVectorSimilarity(torch.nn.Module):
         self.db_vectors = torch.nn.functional.normalize(self.db_vectors, dim=1, p=2)
 
     @torch.no_grad()
-    def forward(self, vectors, k: int = 1) -> List[torch.Tensor]:
+    def forward(self, vectors, k: int = 20) -> Tuple[torch.Tensor, torch.Tensor]:
         """Computes the similarity between the vectors and the database vectors.
 
         Args:
             vectors: The vectors to compare.
+            k: The number of nearest neighbors to find.
 
         Returns:
             The similarity between the vectors and the database vectors.
@@ -59,7 +60,7 @@ class TorchVectorSimilarity(torch.nn.Module):
 
     def nearest_neighbors(
         self, vectors: torch.Tensor, k: int = 1
-    ) -> List[torch.Tensor]:
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
         """Finds the nearest neighbors of the vectors.
 
         Args:
@@ -71,7 +72,7 @@ class TorchVectorSimilarity(torch.nn.Module):
         """
         vectors = torch.nn.functional.normalize(vectors, dim=1, p=2.0)
         similarities = self.compute_similarity(vectors, self.db_vectors)
-        return torch.topk(similarities, k=k, dim=1).indices, similarities
+        return torch.topk(similarities, k=k, dim=1).indices, similarities[:, :k]
 
     def compute_similarity(
         self, vectors1: torch.Tensor, vectors2: torch.Tensor

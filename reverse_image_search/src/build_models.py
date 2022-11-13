@@ -1,6 +1,7 @@
 import numpy as np
 from os import makedirs, path
 from tqdm import tqdm
+from PIL import Image
 import torch
 from torchvision.datasets import FashionMNIST
 from torchvision import transforms
@@ -20,9 +21,16 @@ def train():
     model_path = "model_repo/image_encoder/1/model.pt"
     image_encoder.save(model_path)
     print("Saved image encoder model to", model_path)
+    image_counter = 0
     for i, (images, _) in tqdm(enumerate(train_loader)):
         if images.shape[1] == 1:
             images = images.repeat(1, 3, 1, 1)
+        for image in images:
+            img_path = f"data/reverse_image_search/db/{image_counter}.png"
+            makedirs(path.dirname(img_path), exist_ok=True)
+            image = image.numpy().transpose(1, 2, 0)
+            Image.fromarray((image / image.max() * 255).astype(np.uint8)).save(img_path)
+            image_counter += 1
         vectors = image_encoder(images)
         if hasattr(vectors, "detach"):
             vectors = vectors.detach().numpy()
@@ -33,8 +41,6 @@ def train():
             break
     db_vectors = np.concatenate(db_vectors, axis=0)
     print("DB vectors shape:", db_vectors.shape)
-    # save db_vectors to disk
-    # np.save("db_vectors.npy", db_vectors)
     vector_similarity = TorchVectorSimilarity(db_vectors)
     # save model
     model_path = "model_repo/vector_similarity/1/model.pt"
