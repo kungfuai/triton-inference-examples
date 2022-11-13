@@ -1,0 +1,7 @@
+**/*.pyc
+**/__pycache__/
+/*.png
+/*.npy
+/data
+/model_repo
+*.pth
